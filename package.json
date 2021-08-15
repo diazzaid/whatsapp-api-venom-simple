@@ -1,9 +1,8 @@
 {
-  "name": "whatsapp-api-wppconnect",
+  "name": "whatsapp-api-venom-simple",
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
-    "@wppconnect-team/wppconnect": "^1.8.12",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
     "express-validator": "^6.12.1",
