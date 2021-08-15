@@ -27,38 +27,17 @@ venom.create(
         useChrome: false, // If false will use Chromium instance
         debug: false, // Opens a debug session
         logQR: true, // Logs QR automatically in terminal
-        browserWS: 'ws://10.252.252.209:3030', // If u want to use browserWSEndpoint
+        //browserWS: 'ws://localhost:3030', // If u want to use browserWSEndpoint
         browserArgs: [
-		'--log-level=3',
-                    '--no-default-browser-check',
-                    '--disable-site-isolation-trials',
-                    '--no-experiments',
-                    '--ignore-gpu-blacklist',
-                    '--ignore-certificate-errors',
-                    '--ignore-certificate-errors-spki-list',
-                    '--disable-gpu',
-                    '--disable-extensions',
-                    '--disable-default-apps',
-                    '--enable-features=NetworkService',
-                    '--disable-setuid-sandbox',
-                    '--no-sandbox',
-                    // Extras
-                    '--disable-webgl',
-                    '--disable-threaded-animation',
-                    '--disable-threaded-scrolling',
-                    '--disable-in-process-stack-traces',
-                    '--disable-histogram-customizer',
-                    '--disable-gl-extensions',
-                    '--disable-composited-antialiasing',
-                    '--disable-canvas-aa',
-                    '--disable-3d-apis',
-                    '--disable-accelerated-2d-canvas',
-                    '--disable-accelerated-jpeg-decoding',
-                    '--disable-accelerated-mjpeg-decode',
-                    '--disable-app-list-dismiss-on-blur',
-                    '--disable-accelerated-video-decode',
-				    '--single-process', // <- this one doesn't works in Windows
-		], 
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--no-zygote',
+        '--single-process', // <- this one doesn't works in Windows
+        '--disable-gpu'
+	], 
     })
   .then((client) => start(client))
   .catch((erro) => {
@@ -81,8 +60,6 @@ console.log("Requested sending VIA POST message");
                 res.json({status: 'error', response: 'The number is not registered'});
             });
         })
-
-
 
 //auto reply	
 	  client.onMessage(async (msg) => {
@@ -110,7 +87,7 @@ console.log("Requested sending VIA POST message");
         message += `*WhatsApp version:* ${info.phone.wa_version}\n`;
         client.sendText(msg.from, message);
         
-		//} else if (msg.body.startsWith('!sendto ')) {
+	//} else if (msg.body.startsWith('!sendto ')) {
         // Direct send a new message to specific id
         //let number = msg.body.split(' ')[1];
         //let messageIndex = msg.body.indexOf(number) + number.length;
@@ -155,7 +132,3 @@ console.log("Requested sending VIA POST message");
     if ('UNPAIRED'.includes(state)) console.log('logout');
   });
 }
-
-
-
-
