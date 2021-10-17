@@ -2,6 +2,7 @@ const express = require('express');
 const venom = require('venom-bot');
 const fileUpload = require('express-fileupload');
 const app = express();
+const { phoneNumberFormatter } = require('./helpers/formatter');
 
 app.use(express.json()); //parser used for requests via post,
 app.use(express.urlencoded({ extended : true }));
@@ -9,8 +10,14 @@ app.use(fileUpload({
   debug: false
 }));
 
+app.get('/', (req, res) => {
+  res.sendFile('index.html', {
+    root: __dirname
+  });
+});
+
 venom.create(
-  'session', 
+  'chat1', 
     
     (base64Qrimg, asciiQR, attempts) => {
       console.log('Number of attempts to read the qrcode: ', attempts);
@@ -24,20 +31,41 @@ venom.create(
     {
       headless: true, // Headless chrome
         devtools: false, // Open devtools by default
-        useChrome: false, // If false will use Chromium instance
+        useChrome: true, // If false will use Chromium instance
         debug: false, // Opens a debug session
         logQR: true, // Logs QR automatically in terminal
         //browserWS: 'ws://localhost:3030', // If u want to use browserWSEndpoint
         browserArgs: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--no-first-run',
-        '--no-zygote',
-        '--single-process', // <- this one doesn't works in Windows
-        '--disable-gpu'
-	], 
+		'--log-level=3',
+                    '--no-default-browser-check',
+                    '--disable-site-isolation-trials',
+                    '--no-experiments',
+                    '--ignore-gpu-blacklist',
+                    '--ignore-certificate-errors',
+                    '--ignore-certificate-errors-spki-list',
+                    '--disable-gpu',
+                    '--disable-extensions',
+                    '--disable-default-apps',
+                    '--enable-features=NetworkService',
+                    '--disable-setuid-sandbox',
+                    '--no-sandbox',
+                    // Extras
+                    '--disable-webgl',
+                    '--disable-threaded-animation',
+                    '--disable-threaded-scrolling',
+                    '--disable-in-process-stack-traces',
+                    '--disable-histogram-customizer',
+                    '--disable-gl-extensions',
+                    '--disable-composited-antialiasing',
+                    '--disable-canvas-aa',
+                    '--disable-3d-apis',
+                    '--disable-accelerated-2d-canvas',
+                    '--disable-accelerated-jpeg-decoding',
+                    '--disable-accelerated-mjpeg-decode',
+                    '--disable-app-list-dismiss-on-blur',
+                    '--disable-accelerated-video-decode',
+				    '--single-process', // <- this one doesn't works in Windows
+		], 
     })
   .then((client) => start(client))
   .catch((erro) => {
@@ -45,14 +73,14 @@ venom.create(
   });
 
 function start(client){
-const port = '3000'; 
+const port = '8000'; 
 var server = app.listen(port);
 console.log('Server berjalan pada port %s', server.address().port);
 //sendText
 app.post('/send-message', function (req, res) {
 console.log("Requested sending VIA POST message");	
         client
-            .sendText(req.body.number + '@c.us', req.body.message)
+            .sendText(phoneNumberFormatter(req.body.number), req.body.message)
             .then((result) => {
          res.json({status: 'success', response: 'message sent successfully'});
             })
@@ -60,6 +88,8 @@ console.log("Requested sending VIA POST message");
                 res.json({status: 'error', response: 'The number is not registered'});
             });
         })
+
+
 
 //auto reply	
 	  client.onMessage(async (msg) => {
@@ -87,7 +117,7 @@ console.log("Requested sending VIA POST message");
         message += `*WhatsApp version:* ${info.phone.wa_version}\n`;
         client.sendText(msg.from, message);
         
-	//} else if (msg.body.startsWith('!sendto ')) {
+		//} else if (msg.body.startsWith('!sendto ')) {
         // Direct send a new message to specific id
         //let number = msg.body.split(' ')[1];
         //let messageIndex = msg.body.indexOf(number) + number.length;
