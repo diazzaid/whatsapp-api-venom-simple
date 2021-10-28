@@ -6,7 +6,7 @@
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
     "express-validator": "^6.12.1",
-    "venom-bot": "^3.1.7"
+    "venom-bot": "^3.1.11"
   },
   "devDependencies": {},
   "scripts": {
