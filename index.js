@@ -29,7 +29,7 @@ venom.create(
       console.log('Session name: ', session);
     },
     {
-      headless: false, // Headless chrome
+      headless: true, // Headless chrome
         devtools: false, // Open devtools by default
         useChrome: true, // If false will use Chromium instance
         debug: false, // Opens a debug session
