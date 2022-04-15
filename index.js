@@ -21,24 +21,27 @@ venom.create(
     
     (base64Qrimg, asciiQR, attempts) => {
       console.log('Number of attempts to read the qrcode: ', attempts);
-      console.log('Terminal qrcode: ', asciiQR);
-      console.log('base64 image string qrcode: ', base64Qrimg);
+      //console.log('Terminal qrcode: ', asciiQR);
+      //console.log('base64 image string qrcode: ', base64Qrimg);
     },
      (statusSession, session) => {
       console.log('Status Session: ', statusSession); 
       console.log('Session name: ', session);
     },
     {
-      headless: true, // Headless chrome
+      headless: false, // Headless chrome
+	multidevice: true, // for version not multidevice use false.(default: true)
+        folderNameToken: 'tokens', 
+	mkdirFolderToken: '',
         devtools: false, // Open devtools by default
+	
         useChrome: true, // If false will use Chromium instance
         debug: false, // Opens a debug session
         logQR: true, // Logs QR automatically in terminal
         //browserWS: 'ws://localhost:3030', // If u want to use browserWSEndpoint
         browserArgs: [
-
                     '--no-sandbox',
-		], 
+					], 
     })
   .then((client) => start(client))
   .catch((erro) => {
@@ -51,7 +54,7 @@ var server = app.listen(port);
 console.log('Server berjalan pada port %s', server.address().port);
 //sendText
 app.post('/send-message', function (req, res) {
-console.log("Requested sending VIA POST message");	
+console.log("Mengirim pesan ke "+req.body.number);	
         client
             .sendText(phoneNumberFormatter(req.body.number), req.body.message)
             .then((result) => {
@@ -76,53 +79,6 @@ console.log("Requested sending VIA POST message");
       } else if (msg.body == '!ping reply') {
         // Send a new message as a reply to the current one
         client.reply(msg.from, 'pong', msg.id.toString());
-      } else if (msg.body == '!chats') {
-        const chats = await client.getAllChats();
-        client.sendText(msg.from, `The bot has ${chats.length} chats open.`);
-      } else if (msg.body == '!info') {
-        let info = await client.getHostDevice();
-        let message = `_*Connection info*_\n\n`;
-        message += `*User name:* ${info.pushname}\n`;
-        message += `*Number:* ${info.wid.user}\n`;
-        message += `*Battery:* ${info.battery}\n`;
-        message += `*Plugged:* ${info.plugged}\n`;
-        message += `*Device Manufacturer:* ${info.phone.device_manufacturer}\n`;
-        message += `*WhatsApp version:* ${info.phone.wa_version}\n`;
-        client.sendText(msg.from, message);
-        
-		//} else if (msg.body.startsWith('!sendto ')) {
-        // Direct send a new message to specific id
-        //let number = msg.body.split(' ')[1];
-        //let messageIndex = msg.body.indexOf(number) + number.length;
-        //let message = msg.body.slice(messageIndex, msg.body.length);
-        //number = number.includes('@c.us') ? number : `${number}@c.us`;
-        //client.sendText(number, message);
-      
-	  } else if (msg.body.startsWith('!pin ')) {
-        let option = msg.body.split(' ')[1];
-        if (option == 'true') {
-          await client.pinChat(msg.from, true);
-        } else {
-          await client.pinChat(msg.from, false);
-        }
-      } else if (msg.body.startsWith('!typing ')) {
-        const option = msg.body.split(' ')[1];
-        if (option == 'true') {
-          // Start typing...
-          await client.startTyping(msg.from);
-        } else {
-          // Stop typing
-          await client.stopTyping(msg.from);
-        }
-      } else if (msg.body.startsWith('!ChatState ')) {
-        const option = msg.body.split(' ')[1];
-        if (option == '1') {
-          await client.setChatState(msg.from, '0');
-        } else if (option == '2') {
-          await client.setChatState(msg.from, '1');
-        } else {
-          await client.setChatState(msg.from, '2');
-        }
       }
     } catch (e) {
       console.log(e);
