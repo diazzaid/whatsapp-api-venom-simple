@@ -11,13 +11,13 @@ api web whatsapp simple implementation venom-bot
 8. curl --location --request POST 'http://localhost:3000/send-message' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-  "number": "6281224993382",
+  "number": "628122499xxx",
   "message": "api testing json"
 }'
 9. urldecoded
 10. curl --location --request POST 'http://localhost:3000/send-message' \
 --header 'Content-Type: application/x-www-form-urlencoded' \
---data-urlencode 'number=6281224993381' \
+--data-urlencode 'number=628122499xxxx' \
 --data-urlencode 'message=api testing urldecoded'
 
 thanks
